@@ -104,7 +104,7 @@ This will:
 Once running, open your browser and visit:
 
 ```
-http://<you_host_ip>:8800
+http://<you_host_ip>:8123
 ```
 
 
