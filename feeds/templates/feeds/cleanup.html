@@ -1,0 +1,85 @@
+{% extends 'core/base.html' %}
+{% block content %}
+<ol class="breadcrumb">
+    <li class="breadcrumb-item"><i class="bi bi-gear-fill text-muted me-1"></i></i><a
+            href="{% url 'feeds:settings' %}">Settings</a></li>
+    <li class="breadcrumb-item active">clean up orphaned feeds</li>
+</ol>
+
+<h1 class="text-center mb-4">Clean Up Orphaned Feeds</h1>
+
+<p class="text-center mb-3">
+    <small>
+        It's recommended that you periodically clean up database
+        to remove orphaned feeds metadata.
+        <br>
+        This action is safe and won't delete any files or folders.
+        It doesn't affect feeds that are currently linked with folders.
+    </small>
+</p>
+
+<div class="row justify-content-center mb-4">
+    <div class="col-md-8">
+        <div class="card border-secondary" style="border-width: 1.5px;">
+            <div class="card-body text-center">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <h5 class="mb-1">{{ dirs_count }}</h5>
+                        <p class="text-muted small mb-0">Folders Found</p>
+                    </div>
+                    <div class="col-sm-4">
+                        <h5 class="mb-1">{{ feeds_count }}</h5>
+                        <p class="text-muted small mb-0">Feeds in Database</p>
+                    </div>
+                    <div class="col-sm-4">
+                        <h5 class="mb-1">{{ orphaned_count }}</h5>
+                        <p class="text-muted small mb-0">Orphaned Feeds</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if orphaned_feeds %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card border-secondary mb-4" style="border-width: 1.5px;">
+            <div class="card-body">
+                <h5 class="card-title mb-3 text-center">Orphaned Feeds</h5>
+                <ul class="list-group list-group-flush">
+                    {% for feed in orphaned_feeds %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span class="text-primary">
+                            <i class="bi bi-rss me-2"></i>
+                            {{ feed.name }}
+                        </span>
+                        <small class="text-secondary">{{ feed.last_generated|date:"Y-m-d H:i" }}</small>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <form method="post" class="text-center">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-outline-danger btn-lg px-5">
+                <i class="bi bi-trash3 me-2"></i>
+                Clean Up {{ orphaned_count }} Feed{{ orphaned_count|pluralize }}
+            </button>
+        </form>
+    </div>
+</div>
+{% else %}
+<div class="text-center mt-4">
+    <div class="card border-success mx-auto" style="border-width: 1.5px; max-width: 24rem;">
+        <div class="card-body">
+            <i class="bi bi-check-circle-fill text-success mb-3" style="font-size: 2rem;"></i>
+            <h5>No orphaned feeds found!</h5>
+            <p class="text-muted small mb-0">Everything is clean and up to date.</p>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% endblock content %}

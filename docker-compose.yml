@@ -1,0 +1,46 @@
+services:
+  app:
+    container_name: foldercast
+    build: .
+    restart: always
+    env_file: .env
+    volumes:
+      - .:/app
+      - static_volume:/app/static_cdn
+      - media_volume:/app/media
+      # Update the './library' path below to point to the directory on your system
+      # that you want to use as your library root. Inside this directory, create or remove
+      # subfolders containing your audio files. Each subfolder can be turned into an RSS feed
+      # directly from the app’s web interface.
+      - ./library:/app/library
+
+    command: ["/app/entrypoint.sh"]
+    expose:
+      - 8000
+
+  nginx:
+    image: nginx:stable-alpine
+    container_name: foldercast_nginx
+    restart: always
+
+    # If you update the port, don't forget to also update it in the .env file
+    ports:
+      - 8123:80
+
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - static_volume:/app/static_cdn
+      - media_volume:/app/media
+
+      # Update the './library' path below to point to the directory on your system
+      # that you want to use as your library root. Inside this directory, create or remove
+      # subfolders containing your audio files. Each subfolder can be turned into an RSS feed
+      # directly from the app’s web interface.
+      - ./library:/app/library
+    
+    depends_on:
+      - app
+
+volumes:
+  static_volume:
+  media_volume:

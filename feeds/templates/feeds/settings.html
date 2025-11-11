@@ -1,0 +1,18 @@
+{% extends 'core/base.html' %}
+{% block content %}
+
+<h1>Settings</h1>
+<a href="{% url 'feeds:cleanup' %}">
+<h5>Clean up orphaned feeds</h5>
+</a>
+
+    <p class="mb-1">
+        <small>It's recommended that you periodically clean up database
+            to remove orphaned feeds metadata.
+            This action is safe and won't delete any files or folders.
+            It doesn't affect feeds that are currently linked with folders.
+        </small>
+    </p>
+<hr />
+
+{% endblock content %}

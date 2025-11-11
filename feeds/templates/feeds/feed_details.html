@@ -1,0 +1,98 @@
+{% extends 'core/base.html' %}
+{% block content %}
+
+<ol class="breadcrumb">
+    <li class="breadcrumb-item"><i class="bi bi-folder2-open text-muted me-1"></i><a href="{% url 'feeds:directory_list' %}">Library</a></li>
+    <li class="breadcrumb-item active">{{ feed.name }}</li>
+</ol>
+
+{% if feed %}
+<div class="d-flex flex-column align-items-center mt-4">
+    <div style="max-width: 26rem; width: 100%;">
+
+        {% include 'feeds/_feed_card.html' %}
+
+    </div>
+    <!-- QR code modal -->
+    <div id="qrModal-{{ feed.id }}" class="modal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">{{ feed.name }} QR code</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true"></span>
+                    </button>
+                </div>
+                <div class="modal-body text-center">
+                    <img src="{{ feed.qr_code }}">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End QR code modal -->
+
+    <!-- Feed URL modal -->
+    <div id="rssModal-{{ feed.id }}" class="modal fade" tabindex="-1" aria-labelledby="rssModalLabel-{{ feed.name }}"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="rssModalLabel-{{ feed.name }}">{{ feed.name }} Feed URL</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="input-group mb-3">
+                        <input type="text" id="feedURL-{{ feed.name|slugify }}" value="{{ feed.url }}"
+                            class="form-control text-center" readonly>
+                        <button class="btn btn-outline-secondary" type="button"
+                            onclick="copyFeedURL('{{ feed.name|slugify }}', this)">
+                            Copy
+                        </button>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Feed URL modal -->
+
+</div>
+{% else %}
+<p>No feed was generated.</p>
+{% endif %}
+
+{% block script %}
+<script>
+    function copyFeedURL(feedName, button) {
+        const input = document.getElementById(`feedURL-${feedName}`);
+        if (!input) return;
+
+        input.select();
+        input.setSelectionRange(0, 99999); // for mobile
+
+        try {
+            document.execCommand('copy');
+            const originalText = button.textContent;
+            button.textContent = 'Copied!';
+            button.classList.replace('btn-outline-secondary', 'btn-success');
+            setTimeout(() => {
+                button.textContent = originalText;
+                button.classList.replace('btn-success', 'btn-outline-secondary');
+            }, 1500);
+        } catch (err) {
+            console.error('Failed to copy:', err);
+            alert('Failed to copy URL.');
+        } finally {
+            window.getSelection().removeAllRanges();
+        }
+    }
+</script>
+{% endblock script %}
+
+
+{% endblock content %}

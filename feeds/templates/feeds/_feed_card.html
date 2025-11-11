@@ -1,0 +1,49 @@
+<!-- feed card -->
+<div class="card border-secondary h-100" style="border-width: 1.5px; max-width: 22rem;">
+    <div class="card-body text-center">
+
+        {% if feed.artwork %}
+        <img src="{{ feed.artwork }}" alt="{{ feed.name }} artwork" class="rounded mb-3"
+            style="width: 96px; height: 96px; object-fit: cover;">
+        {% else %}
+        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor"
+            class="bi bi-broadcast text-secondary mb-3" viewBox="0 0 16 16">
+            <path d="M3.05 3.05a7 7 0 1 1 9.9 9.9.5.5 0 0 1-.707-.707 6 6 0 1 0-8.486-8.486.5.5 0 1 1-.707-.707z" />
+            <path
+                d="M6.343 6.343a3 3 0 1 1 4.243 4.243.5.5 0 0 1-.707-.707 2 2 0 1 0-2.829-2.829.5.5 0 1 1-.707-.707z" />
+            <path
+                d="M8 8a.5.5 0 0 1 .5.5v5.293l1.146-1.147a.5.5 0 0 1 .708.708l-2 2a.497.497 0 0 1-.708 0l-2-2a.5.5 0 1 1 .708-.708L7.5 13.793V8.5A.5.5 0 0 1 8 8z" />
+        </svg>
+        {% endif %}
+
+        <h5 class="card-title mb-1 text-truncate">{{ feed.name|truncatechars:30 }}</h5>
+        <p class="text-muted small mb-2">{{ feed.items_count }} file{{ feed.items_count|pluralize }}</p>
+        
+        {% if stale %}
+            <span class="badge rounded-pill bg-danger mb-3">stale feed</span>
+        {% else %}
+            <span class="badge rounded-pill bg-success mb-3">up to date</span>
+        {% endif %}
+
+        <hr class="my-3">
+        <div class="d-grid gap-2">
+
+            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal"
+                data-bs-target="#rssModal-{{ feed.id }}">
+                <i class="bi bi-rss-fill me-1"></i>
+                Feed URL
+            </button>
+
+            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal"
+                data-bs-target="#qrModal-{{ feed.id }}">
+                <i class="bi bi-qr-code-scan me-1"></i>
+                Show QR Code
+            </button>
+            <a href="{{ feed.url }}" target="_blank" class="btn btn-outline-primary">
+                <i class="bi bi-code-slash me-1"></i>
+                View RSS Feed
+            </a>
+        </div>
+    </div>
+</div>
+<!-- end feed card -->

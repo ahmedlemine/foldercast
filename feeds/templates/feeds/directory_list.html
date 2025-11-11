@@ -1,0 +1,80 @@
+{% extends 'core/base.html' %}
+{% block content %}
+<div class="alert alert-dismissible alert-info small">
+  <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  <strong>Tip:</strong> Create or drop a folder continaing audio files in your library root (default: <code>library</code>) to show up here.
+</div>
+<h3 class="mb-1">My Folders ({{ directories|length }})</h3>
+<small class="mb-2 text-muted">Only listing folders that contain audio files.</small>
+
+<div class="row g-4 mt-1">
+    {% if directories %}
+        {% for d in directories %}
+        <div class="col-sm-12 col-md-6 col-lg-4">
+            <div class="card border-secondary h-100" style="border-width: 1.5px;">
+                <div class="card-body text-center">
+
+                    <div class="mb-3 text-secondary">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor"
+                            class="bi bi-folder" viewBox="0 0 16 16">
+                            <path
+                                d="M.54 3.87.5 3a2 2 0 0 1 2-2h3.672a2 2 0 0 1 1.414.586l.828.828A2 2 0 0 0 9.828 3h3.982a2 2 0 0 1 1.992 2.181l-.637 7A2 2 0 0 1 13.174 14H2.826a2 2 0 0 1-1.991-1.819l-.637-7a2 2 0 0 1 .342-1.31zM2.19 4a1 1 0 0 0-.996 1.09l.637 7a1 1 0 0 0 .995.91h10.348a1 1 0 0 0 .995-.91l.637-7A1 1 0 0 0 13.81 4zm4.69-1.707A1 1 0 0 0 6.172 2H2.5a1 1 0 0 0-1 .981l.006.139q.323-.119.684-.12h5.396z" />
+                        </svg>
+                    </div>
+
+                    <h5 class="card-title text-truncate mb-1">{{ d.name }}</h5>
+                    <p class="text-muted mb-2 small">{{ d.file_count }} file{{ d.file_count|pluralize }}</p>
+
+                    {% if d.status == "no_feed" %}
+                    <span class="badge rounded-pill bg-danger">no feed</span>
+                    {% elif d.status == "stale" %}
+                    <span class="badge rounded-pill bg-warning">stale feed</span>
+                    {% else %}
+                    <span class="badge rounded-pill bg-success">feed up to date</span>
+                    {% endif %}
+
+                    <hr class="my-3">
+
+                    {% if d.status == "no_feed" %}
+                    <a href="{% url 'feeds:create_feed' d.name %}" class="btn btn-outline-primary w-100">
+
+                        <i class="bi bi-plus-circle-fill me-1"></i>
+                        Generate Feed
+                    </a>
+                    {% elif d.status == "stale" %}
+                    <a href="{% url 'feeds:create_feed' d.name %}" class="btn btn-outline-primary w-100">
+
+                        <i class="bi bi-arrow-clockwise me-1"></i>
+                        Regenerate Feed
+                    </a>
+                    {% else %}
+                    <a href="{% url 'feeds:feed_details' d.feed.id %}" class="btn btn-outline-primary w-100">
+                        <i class="bi bi-rss-fill me-1"></i>
+                        Show Feed
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    
+    {% else %}
+
+    <div class="text-center mt-5">
+        <div class="card border-0 p-4 mx-auto" style="max-width: 30rem;">
+            <i class="bi bi-folder-x text-secondary display-4 mb-3"></i>
+            <h5 class="mb-3 text-muted">Your library is empty</h5>
+            <p class="">
+                To get started, create a new folder in your <code>library</code> directory
+                and add some audio files. Then refresh this page to see your folders appear.
+            </p>
+            <button class="btn btn-outline-primary mt-3" onclick="location.reload()">
+                <i class="bi bi-arrow-clockwise me-1"></i> Refresh Page
+            </button>
+        </div>
+    </div>
+
+    {% endif %}
+</div>
+
+{% endblock content %}

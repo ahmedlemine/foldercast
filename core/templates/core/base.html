@@ -1,0 +1,126 @@
+{% load static %}
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- BootSwatch Bootstrap 5 Theme -->
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/bootstrap-icons/font/bootstrap-icons.min.css' %}">
+    <link rel="stylesheet" href="{% static 'js/prismjs/themes/prism-okaidia.css' %}">
+
+    <link rel="stylesheet" href="{% static 'css/custom.css' %}">
+    <link rel="icon" href="{% static 'img/favicon.png' %}" type="image/x-icon">
+
+    <title>FolderCast{% block title %}{% endblock %}</title>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
+        <div class="container-fluid">
+            <a class="navbar-brand d-flex align-items-center" href="/">
+    <img src="{% static 'img/foldercast_logo_white.png' %}"
+         alt="FolderCast Logo"
+         class="me-2"
+         style="height: 24px; width: 32px;">
+    FolderCast
+</a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01"
+                aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarColor01">
+                <!-- Left-aligned items -->
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{% url 'feeds:directory_list' %}">Folders
+                            <span class="visually-hidden"></span>
+                        </a>
+                    </li>
+                </ul>
+
+                <!-- Right aligned user menu/avatar -->
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{% url 'feeds:settings' %}">
+                            <i class="bi bi-gear-fill"></i>
+                            <span class="visually-hidden"></span>
+                        </a>
+                    </li>
+
+                    <!-- Theme setting menu -->
+                    <li class="nav-item dropdown" data-bs-theme="light">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="theme-menu"
+                            aria-expanded="false" data-bs-toggle="dropdown" data-bs-display="static"
+                            aria-label="Toggle theme">
+                            <i class="bi bi-circle-half"></i>
+                            <span class="d-lg-none ms-2">Theme</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                                <button type="button" class="dropdown-item d-flex align-items-center"
+                                    data-bs-theme-value="light" aria-pressed="false">
+                                    <i class="bi bi-sun-fill"></i><span class="ms-2">Light</span>
+                                </button>
+                            </li>
+                            <li>
+                                <button type="button" class="dropdown-item d-flex align-items-center"
+                                    data-bs-theme-value="dark" aria-pressed="true">
+                                    <i class="bi bi-moon-stars-fill"></i><span class="ms-2">Dark</span>
+                                </button>
+                            </li>
+                        </ul>
+                    </li>
+                    <!-- End Theme setting menu -->
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- Messages -->
+    {% if messages %}
+    {% for message in messages %}
+    <div
+        class="container my-4 alert alert-dismissible 
+        alert-{% if message.tags %}{% if message.tags == 'error' %}danger {% else %}{{ message.tags }}{% endif %} {% endif %} messages">
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <p class="mb-0" {% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</p>
+    </div>
+    {% endfor %}
+    {% endif %}
+    <!-- end messages -->
+    <div class="container mt-4" style="margin-bottom: 150px;">
+        {% block content %}{% endblock content %}
+    </div>
+
+    {% block extra_body %}{% endblock extra_body %}
+
+    {% block script %}{% endblock script %}
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'js/prismjs/prism.js' %}" data-manual></script>
+    <script>
+        // Toggle light and dark themes
+        function toggleThemeMenu() {
+            const theme = localStorage.getItem('theme') || 'light'
+            document.documentElement.setAttribute('data-bs-theme', theme);
+
+            let themeMenu = document.querySelector('#theme-menu');
+
+            if (!themeMenu) return;
+
+            document.querySelectorAll('[data-bs-theme-value]').forEach(value => {
+                value.addEventListener('click', () => {
+                    const theme = value.getAttribute('data-bs-theme-value');
+                    document.documentElement.setAttribute('data-bs-theme', theme);
+                    localStorage.setItem('theme', theme)
+                });
+            });
+        }
+        toggleThemeMenu();
+    </script>
+</body>
+
+</html>
