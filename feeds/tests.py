@@ -176,3 +176,81 @@ class TestFeedDetailsView(TestCase):
             reverse("feeds:feed_details", kwargs={"feed_uuid": self.shared_instance.id})
         )
         self.assertTemplateUsed(response, "feeds/feed_details.html")
+
+
+class TestFeedCreateView(TestCase):
+    def setUp(self):
+        self.feed_name = "test_feed"
+        feed_dir = Path(settings.LIBRARY_ROOT) / self.feed_name
+        feed_dir.mkdir()
+
+        for i in range(1, 4):
+            file = Path(feed_dir / f"audio_file{i}.mp3")
+            file.touch()
+
+        self.url = reverse(
+            "feeds:create_feed",
+            kwargs={"directory_name": self.feed_name},
+        )
+
+    def tearDown(self):
+        feed_dir = Path(settings.LIBRARY_ROOT) / self.feed_name
+        if feed_dir.exists():
+            for file in feed_dir.iterdir():
+                file.unlink()
+            feed_dir.rmdir()
+
+    def test_url_exists_at_correct_location(self):
+        response = self.client.get(f"/feed/create/{self.feed_name}/", follow=True)
+        self.assertEqual(response.status_code, 200)
+
+    def test_view_available_by_name(self):
+        response = self.client.get(self.url, follow=True)
+        self.assertEqual(response.status_code, 200)
+
+    def test_context_contains_new_feed_data(self):
+        response = self.client.get(self.url, follow=True)
+        self.assertIsNotNone(response.context["feed"])
+
+    def test_context_contains_valid_data(self):
+        response = self.client.get(self.url, follow=True)
+        self.assertEqual(response.context["feed"].name, self.feed_name)
+
+    def test_feed_rss_file_exists(self):
+        self.client.get(self.url)
+        feed_dir = Path(settings.LIBRARY_ROOT) / self.feed_name
+        rss_file = feed_dir / "feed.rss"
+        self.assertTrue(rss_file.exists())
+
+    def test_missing_dir_name_returns_404(self):
+        response = self.client.get("/feed/create_feed/")
+        self.assertEqual(response.status_code, 404)
+
+    def test_create_with_no_audio_files(self):
+        feed_dir = Path(settings.LIBRARY_ROOT) / self.feed_name
+        if feed_dir.exists():
+            for file in feed_dir.iterdir():
+                file.unlink()
+
+        response = self.client.get(self.url, follow=True)
+        self.assertContains(response, "No audio files found in folder")
+
+    def test_create_with_invalid_dir(self):
+        response = self.client.get(
+            reverse(
+                "feeds:create_feed",
+                kwargs={"directory_name": "invalid_name"},
+            ),
+            follow=True,
+        )
+        self.assertContains(response, "folder not found.")
+
+    def test_create_with_up_to_date_feed(self):
+        """
+        Call create view first to create a feed, then immediately
+        attempt to create a feed again which should fail because
+        feed is up to date.
+        """
+        self.client.get(self.url)
+        response = self.client.get(self.url, follow=True)
+        self.assertContains(response, "Feed is already up to date.")
