@@ -1,3 +1,4 @@
+![home page](demo/foldercast_home_light.png)
 **FolderCast** is a self-hosted web app that generates podcast-ready RSS feeds from your local audio folders. It scans your chosen library directories, generates standard podcast feeds, and gives you a unique link (and QR code) for each one. Simply add that link to your favorite podcast player and stream your personal audio collection (lectures, YouTube downloads, audiobooks, or voice notes) just like a regular podcast. Everything runs locally and stays fully under your control.
 
 ---
@@ -47,6 +48,13 @@ That's what listening on a regular podcast player app gives you. But to get ther
 * QR code generation for quick mobile subscriptions.
 * Feed status indicators (Up to Date, Stale, No Feed).
 * Smart feed generation: updates only when directories change.
+
+
+### Screenshots
+![home page](demo/foldercast_home_light.png)
+![home page dark theme](demo/foldercast_home_dark.png)
+![feed details light](demo/foldercast_feed_light.png)
+![feed details dark](demo/foldercast_feed_dark.png )
 
 ---
 
