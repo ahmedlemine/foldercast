@@ -97,13 +97,13 @@ CSRF_TRUSTED_ORIGINS=<http://<your_server_ip>:<server_port>
 ### 4. Build and start the containers
 
 ```bash
-docker compose up -d --build
+docker compose up -d
 ```
 
 This will:
 
-- Build the `app` container (Django + Gunicorn)
-- Start `nginx` to serve static/media files and reverse proxy to Django
+- Pull and start the `app` container (Django + Gunicorn) from ghcr.io
+- Pull and start `nginx` to serve static/media files and reverse proxy to Django
 - Automatically create the `./library/` directory if it doesn’t exist. However, you should've already created this directory in step #2 to avoid permission issues.
     
 
@@ -124,7 +124,13 @@ Stop the stack:
 docker compose down
 ```
 
-Restart after changes:
+Update to latest images:
+
+```bash
+docker compose pull
+```
+
+Restart after updates/changes:
 
 ```bash
 docker compose up -d
@@ -147,3 +153,12 @@ You can:
 * Open an issue or pull request on GitHub.
 * Suggest refinements that make feed generation or local hosting better.
 * Share ideas for improving usability without adding unnecessary complexity.
+
+
+## Support FolderCast
+
+If FolderCast has been useful to you, consider supporting its development. Your support helps cover build costs and gives me more time to improve the project, fix bugs, and add new features.
+
+☕ Buy me a coffee: https://buymeacoffee.com/ahmedlemine
+
+Thank you for your support!
