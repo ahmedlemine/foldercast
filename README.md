@@ -59,81 +59,56 @@ That's what listening on a regular podcast player app gives you. But to get ther
 ---
 
 ## Running FolderCast
+FolderCast is available as a pre-built Docker image on GHCR, so there is no need to clone the repository or build the image locally. Follow the steps to run the project.
 
-FolderCast runs entirely in Docker using **Docker Compose**, so you don’t need to install Python or dependencies on your host.
-
-### 1. Clone the repository
+### 1. Create a working directory
 
 ```bash
-git clone https://github.com/ahmedlemine/foldercast.git
+mkdir foldercast
 cd foldercast
 ```
 
-### 2. Create your local library
-
-FolderCast stores all your audio folders, generated feeds, QR codes, and artwork inside a local directory called `library`.  
-Create it manually in `foldercast` directory (recommended) and make sure it's owned by your current user:
+### 2. Create your library directory
 
 ```bash
-mkdir -p ./library
-chown $USER:$USER ./library
+mkdir library
 ```
 
-### 3. Create your environment file
+The `library` directory will contain subdirectories for your audio files. Each subdirectory inside `library` will be turned into an RSS feed.
 
-Copy the example `.env` file and update values as needed:
+### 3. Create `docker-compose.yml`
 
-```bash
-cp example.env .env
-```
+Create a file named `docker-compose.yml` inside the root of `foldercast` directory you created in step #1 and paste the contents of the project's [docker-compose.yml](https://github.com/ahmedlemine/foldercast/blob/main/docker-compose.yml) into it and save.
 
-At minimum, set your Django secret key (get a new one at [Djecrety](https://djecrety.ir/)):
+### 4. Update the configuration in `docker-compose.yml`
 
-```env
-SECRET_KEY=your-secret-key
-CSRF_TRUSTED_ORIGINS=<http://<your_server_ip>:<server_port>
-```
+Before starting the container:
 
-### 4. Build and start the containers
+* Generate a new `SECRET_KEY` from https://djecrety.ir/
+* Replace `<your_server_ip>` with your server's IP address or hostname.
+* Change the host port (`8123`) if desired. If you do, update both `ports` and `SERVER_PORT` accordingly.
+* Save `docker-compose.yml` file and close.
+
+### 5. Start FolderCast
 
 ```bash
 docker compose up -d
 ```
 
-This will:
+### 6. Open FolderCast Web UI
 
-- Pull and start the `app` container (Django + Gunicorn) from ghcr.io
-- Pull and start `nginx` to serve static/media files and reverse proxy to Django
-- Automatically create the `./library/` directory if it doesn’t exist. However, you should've already created this directory in step #2 to avoid permission issues.
-    
+Visit:
 
-### 5. Access FolderCast
-
-Once running, open your browser and visit:
-
-```
-http://<you_host_ip>:8123
+```text
+http://<your_server_ip>:8123
 ```
 
+### Updating
 
-### 7. Stopping and restarting
-
-Stop the stack:
+To update to the latest version:
 
 ```bash
-docker compose down
-```
-
-Update to latest images:
-
-```bash
-docker compose pull
-```
-
-Restart after updates/changes:
-
-```bash
-docker compose up -d
+docker compose pull && docker compose up -d
 ```
 
 ---
