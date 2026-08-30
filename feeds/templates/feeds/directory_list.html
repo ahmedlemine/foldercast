@@ -1,8 +1,8 @@
 {% extends 'core/base.html' %}
 {% block content %}
-<div class="alert alert-dismissible alert-info small">
-  <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-  <strong>Tip:</strong> Create or drop a folder continaing audio files in your library root (default: <code>library</code>) to show up here.
+<div id="tip-alert" class="alert alert-dismissible alert-info small">
+  <button onclick="hideTipAlert()" type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  <strong>Tip:</strong> Create or drop a folder containing audio files in your library root (default: <code>library</code>) to show up here.
 </div>
 <h3 class="mb-1">My Folders ({{ directories|length }})</h3>
 <small class="mb-2 text-muted">Only listing folders that contain audio files.</small>
@@ -76,5 +76,16 @@
 
     {% endif %}
 </div>
+<script>
+    const tipAlertEl = document.querySelector("#tip-alert")
+    const shouldHideTip = JSON.parse(localStorage.getItem("shouldHideTip")) || false
 
+    if (shouldHideTip && tipAlertEl) {
+        tipAlertEl.remove()
+    }
+
+    function hideTipAlert() {
+        localStorage.setItem("shouldHideTip", JSON.stringify(true))
+    }
+</script>
 {% endblock content %}
