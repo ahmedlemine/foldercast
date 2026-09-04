@@ -68,7 +68,7 @@ def get_artwork_url(request_host, directory, title_text):
     if not artwork_path.exists() or not artwork_path.is_file():
         generate_artwork_img(title_text, artwork_path)
 
-    return f"http://{request_host}/{settings.LIBRARY_URL}{quote(directory.name)}/{artwork_name}"
+    return f"{request_host}/{settings.LIBRARY_URL}{quote(directory.name)}/{artwork_name}"
 
 
 class FeedItem:
@@ -86,7 +86,7 @@ class FeedItem:
         )
         self.episode.pubDate(get_timezone_aware_datetime(self.creation_timestamp))
         self.episode.enclosure(
-            url=f"http://{request_host}/{settings.LIBRARY_URL}{quote(dir_name)}/{quote(file.name)}",
+            url=f"{request_host}/{settings.LIBRARY_URL}{quote(dir_name)}/{quote(file.name)}",
             type=settings.AUDIO_MIME_TYPES.get(
                 file.suffix.lower().lstrip("."), "audio/mpeg"
             ),
@@ -117,7 +117,7 @@ class FeedGeneratorService:
         )
         fg.language("en")
         fg.link(
-            href=f"http://{self.request_host}/{settings.LIBRARY_URL}{quote(self.directory.name)}/feed.rss",
+            href=f"{self.request_host}/{settings.LIBRARY_URL}{quote(self.directory.name)}/feed.rss",
             rel="self",
         )
 
@@ -143,7 +143,7 @@ class FeedGeneratorService:
         rss_file.parent.mkdir(parents=True, exist_ok=True)
         self.feedgen.rss_file(str(rss_file), pretty=True)
 
-        rss_url = f"http://{self.request_host}/{settings.LIBRARY_URL}{quote(self.directory.name)}/feed.rss"
+        rss_url = f"{self.request_host}/{settings.LIBRARY_URL}{quote(self.directory.name)}/feed.rss"
 
         logger.info(f"Successfully written feed {self.directory.name} to file.")
 
@@ -158,7 +158,7 @@ class FeedGeneratorService:
             "url": rss_url,
             "items_count": len(self.audio_files),
             "artwork": self.feedgen.logo(),
-            "qr_code": f"http://{self.request_host}/{settings.LIBRARY_URL}{quote(self.directory.name)}/feed_qr_code.png",
+            "qr_code": f"{self.request_host}/{settings.LIBRARY_URL}{quote(self.directory.name)}/feed_qr_code.png",
             "last_generated": timezone.now(),
         }
         feed, created = Feed.objects.update_or_create(

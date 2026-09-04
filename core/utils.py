@@ -1,6 +1,8 @@
 import pytz
 from datetime import datetime
+import validators
 from django.conf import settings
+
 
 def get_timezone_aware_datetime(timestamp):
     creation_datetime = datetime.fromtimestamp(timestamp)
@@ -10,7 +12,12 @@ def get_timezone_aware_datetime(timestamp):
 
 
 def build_host(request):
-    host = request.get_host()
-    if settings.DEBUG:
-        return host
-    return f"{host}:{settings.SERVER_PORT}"
+    base_host = request.get_host()
+    protocol = request.scheme
+    host_with_protocol = f"{protocol}://{base_host}"
+
+    # if using a domain name, don't add a port number
+    if validators.domain(base_host):
+        return host_with_protocol
+
+    return f"{host_with_protocol}:{settings.SERVER_PORT}"
